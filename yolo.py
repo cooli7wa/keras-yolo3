@@ -21,13 +21,15 @@ class YOLO(object):
     def __init__(self):
         self.model_path = 'model_data/yolo.h5' # model path or trained weights path
         self.anchors_path = 'model_data/yolo_anchors.txt'
-        self.classes_path = 'model_data/coco_classes.txt'
+        # self.classes_path = 'model_data/coco_classes.txt'
+        self.classes_path = 'model_data/tiao_classes.txt'
         self.score = 0.3
         self.iou = 0.45
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
         self.sess = K.get_session()
         self.model_image_size = (416, 416) # fixed size or (None, None), hw
+        # self.model_image_size = (640, 640) # fixed size or (None, None), hw
         self.boxes, self.scores, self.classes = self.generate()
 
     def _get_class(self):
@@ -140,15 +142,16 @@ class YOLO(object):
                 draw.rectangle(
                     [left + i, top + i, right - i, bottom - i],
                     outline=self.colors[c])
-            draw.rectangle(
-                [tuple(text_origin), tuple(text_origin + label_size)],
-                fill=self.colors[c])
-            draw.text(text_origin, label, fill=(0, 0, 0), font=font)
+            # draw.rectangle(
+            #     [tuple(text_origin), tuple(text_origin + label_size)],
+            #     fill=self.colors[c])
+            # draw.text(text_origin, label, fill=(0, 0, 0), font=font)
             del draw
 
         end = timer()
-        print(end - start)
-        return image
+        # print(end - start)
+        return out_boxes, out_classes
+
 
     def close_session(self):
         self.sess.close()

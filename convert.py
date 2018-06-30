@@ -218,7 +218,7 @@ def _main(args):
 
         elif section.startswith('upsample'):
             stride = int(cfg_parser[section]['stride'])
-            assert stride == 2, 'Only stride=2 supported.'
+            #assert stride == 2, 'Only stride=2 supported.'
             all_layers.append(UpSampling2D(stride)(prev_layer))
             prev_layer = all_layers[-1]
 
