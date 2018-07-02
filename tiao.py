@@ -10,13 +10,13 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 WAIT_AFTER_JUMP = 3000
 WAIT_AFTER_PULL = 2
-CAPTURE_FOLDER = '/home/cooli7wa/Desktop/'
+CAPTURE_FOLDER = '/home/cooli7wa/Desktop/tmp_image/'
 CAPTURE_FILE = CAPTURE_FOLDER + 'screen.png'
 IMG_PATH = '/home/cooli7wa/project/pycharm/tiaotiao/img/'
 PRESS_PARAM = 1.375
-CHESS_CENTER_CORRECT = 25
+CHESS_CENTER_CORRECT = 22
 INVALID_BOX_DISTANCE = 20
-RESTORE_NUM = 10
+RESTORE_NUM = 50
 RESTART_GAME_POS = [600, 1700]
 
 screen_param = {'width': 0, 'height': 0}
@@ -38,11 +38,20 @@ def get_screen_parameter():
 
 
 def screen_capture_download():
+    # process = subprocess.Popen('adb shell screencap -p', shell=True, stdout=subprocess.PIPE)
+    # screenshot = process.stdout.read()
+    # f = open('{}'.format(CAPTURE_FILE), 'wb')
+    # f.write(screenshot)
+    # f.close()
+
     process = subprocess.Popen('adb shell screencap -p', shell=True, stdout=subprocess.PIPE)
     screenshot = process.stdout.read()
+    screenshot = screenshot.replace(b'\r\n', b'\n')
     f = open('{}'.format(CAPTURE_FILE), 'wb')
     f.write(screenshot)
     f.close()
+    # binary_screenshot = binary_screenshot.replace(b'\r\r\n', b'\n')
+    # return Image.open(StringIO(binary_screenshot))
 
 
 def jump(distance):
@@ -161,3 +170,4 @@ if __name__ == '__main__':
     get_screen_parameter()
     restore_counter = 0
     main_loop(YOLO())
+    # screen_capture_download()

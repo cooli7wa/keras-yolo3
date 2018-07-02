@@ -14,27 +14,29 @@ from yolo3.utils import get_random_data
 
 
 def _main():
-    annotation_path = 'train.txt'
+    # annotation_path = 'train.txt'
+    annotation_path = '/home/cooli7wa/project/pycharm/tiaotiao/img/train.txt'
     log_dir = 'logs/000/'
-    classes_path = 'model_data/voc_classes.txt'
+    # classes_path = 'model_data/voc_classes.txt'
+    classes_path = 'model_data/tiao_classes.txt'
     anchors_path = 'model_data/yolo_anchors.txt'
     class_names = get_classes(classes_path)
     num_classes = len(class_names)
     anchors = get_anchors(anchors_path)
 
-    input_shape = (416,416) # multiple of 32, hw
+    input_shape = (416,416)  # multiple of 32, hw
 
-    is_tiny_version = len(anchors)==6 # default setting
+    is_tiny_version = len(anchors) == 6  # default setting
     if is_tiny_version:
         model = create_tiny_model(input_shape, anchors, num_classes,
             freeze_body=2, weights_path='model_data/tiny_yolo_weights.h5')
     else:
-        model = create_model(input_shape, anchors, num_classes,
-            freeze_body=2, weights_path='model_data/yolo_weights.h5') # make sure you know what you freeze
+        model = create_model(input_shape, anchors, num_classes, load_pretrained = False,
+            freeze_body=0, weights_path='model_data/yolo_weights.h5') # make sure you know what you freeze
 
     logging = TensorBoard(log_dir=log_dir)
     checkpoint = ModelCheckpoint(log_dir + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
-        monitor='val_loss', save_weights_only=True, save_best_only=True, period=3)
+        monitor='val_loss', save_weights_only=False, save_best_only=True, period=3)
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, verbose=1)
     early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
 
@@ -54,7 +56,7 @@ def _main():
             # use custom yolo_loss Lambda layer.
             'yolo_loss': lambda y_true, y_pred: y_pred})
 
-        batch_size = 32
+        batch_size = 8
         print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
         model.fit_generator(data_generator_wrapper(lines[:num_train], batch_size, input_shape, anchors, num_classes),
                 steps_per_epoch=max(1, num_train//batch_size),
